@@ -1,5 +1,4 @@
 <?php require_once("nic/connect.php");?>
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -10,63 +9,20 @@
 	<meat name="viewport" content="width=device-width,initial-scale=1"/>
 </head>
 <body>
-	<div  id="top">
-		<div class="top-text">ĐH Kinh Tế - Kỹ Thuật CN Hà Nội</div>
-		<div class="login">
-			<ul>
-				<li><a href="dangky.php">Đăng Ký</a></li>
-				<li><a href="dangnhap.php">Đăng Nhập</a></li>
-			</ul>
-		</div><!--login-->
-	</div><!--top-->
-
-	<div id="header">
-	 <div class="header">
-			<div id="logo">
-				<div class="logo-title">B</div>
-				<div class="text">Log Tin9A5</div>
-			</div><!--logo-->
-			<div id="search">
-				<form method="post">
-					<input type="search" placeholder="Bạn Tìm Gì nào" name="search">
-					<button type="submit" class="btn btn-success">Tìm</button>
-				</form>
-			</div><!--search-->
-	 </div><!--header-class-->
-	</div><!--header-->
-	<div id="menu">
-			<ul>
-				<li><a href="index.php"><img src="img/icon/home.png">Trang Chủ</a></li>
-				<li><a href="#">Diễn Đàn</a></li>
-				<li><a href="#">Lịch Học</a></li>
-				<li><a href="#">Tài Liệu
-					<ul class="sub-menu">
-						<li><a href="#">Học Html Cơ Bản</a></li>
-						<li><a href="#">Học Php</a></li>
-						<li><a href="#">Học Javascript</a></li>
-						<li><a href="#">Học Mysql</a></li>
-					</ul>
-
-				</a></li>
-				<li><a href="#">Media</a>
-					<ul class="sub-menu">
-						<li><a href="#">Mp3</a></li>
-						<li><a href="#">Video Html 5</a></li>
-						<li><a href="#">Video Php</a></li>
-						<li><a href="#">Video Javascript</a></li>
-						<li><a href="#">Video Mysql</a></li>
-						
-					</ul>
-
-				</li>
-
-			</ul>
-	</div><!--menu-->
+	<?php require_once("temp/menu.php");?>
 
 	<div id="main">
 		<div id="list">&raquo; Câu Hỏi Diễn Đàn</div>
 		<?php
-			$sql="SELECT * FROM posts ORDER BY id DESC";
+			$page=empty($_GET["page"]) ? 1 :($_GET["page"]);
+
+               $totalposts=get_total_post();
+
+               $startfrom= ($page -1) * $postpage; // bien chay 
+               // tran chay tu 1, nhung limit trong ysal lai chay tu page 0 den -1
+               $totalpage=round($totalposts/$postpage); // lay ve tong so trang
+
+			$sql="SELECT posts.id,posts.title,posts.content,posts.excerpt,posts.user,posts.datetime,posts.cat_id,category.id as cid ,category.title as name FROM posts,category WHERE posts.cat_id=category.id ORDER BY id DESC LIMIT $startfrom,$postpage";
 			$query=mysqli_query($conn,$sql);
 			while($row=mysqli_fetch_array($query,MYSQLI_ASSOC)) :
 
@@ -76,42 +32,118 @@
 				<img src="img/anh.jpg">
 			</div><!--content-img-->
 			<div class="content-nd">
-				<div class="content-title"><a href="single.php?id=<?php echo $row['id']; ?>"><?php echo $row['title']; ?></a></div><!--content-title-->
-				<div class="content"><?php echo $row['excerpt']; ?></div><!--content-->
-				<div class="content-date"><font color="red" style="font-weight:bold;">Time: </font><?php echo $row['datetime'];?>
-					 &hearts; 
-				<font color="red" style="font-weight:bold;">You: </font><?php echo $row['user'];?>
+
+				<div class="content-title">
+				    <a href="single.php?id=<?php echo $row['id']; ?>"><img src="img/icon/next.png" width="15px" height="15px"> <?php echo $row['title']; ?></a>
+				</div><!--content-title-->
+
+				<div class="content">
+					<?php echo $row['excerpt']; ?>
+					
+				</div><!--content-->
+
+				<div class="content-date">
+					<font color="red" style="font-weight:bold;">Time: </font><?php echo $row['datetime'];?>
+						 &hearts; 
+					<font color="red" style="font-weight:bold;">You: </font><?php echo $row['user'];?>
+					 	&hearts; 
+					<font color="red" style="font-weight:bold;">Mục: </font><a href="category-list.php?id=<?php echo $row['cid']; ?>"><?php echo $row['name'];?></a>
 
 				</div><!--content-date-->
 
 			</div><!--content-nd-->
 			
 		</div><!--main-->
-		<div style="clear:left;"></div>
+
+			<div style="clear:left;"></div>
 		<?php endwhile; ?>
 
+
 	</div><!--main-->
-	</div>
+
+	<!--Hien thi so trang-->
+	
+			<div id="page">
+				<ul>
+					<li><a href="#" class="active">&laquo; </a></li>
+					<?php if($totalpage > 0) : ?>
+		                <?php for($i=0;$i<$totalpage;$i++): ?>
+		                   <li><a class="<?php echo ($i+1) == $page ? "active" : "" ;?>" 
+		                   href="index.php?page=<?php echo ($i+1); ?>"><?php echo $i+1;?></a>
+		                <?php endfor; ?>
+		              <?php endif; ?>	
+		              <li><a href="#" class="active">&raquo; </a></li>
+		        </ul>
+
+			</div><!--next-->
+
+    <div id="new-list">
+    	<div id="new-left">
+    		<div id="list">&raquo; Video Dạy Học </div>
+    		<table>
+    			<tr>
+    				<td><img src="img/icon/next.png" width="15px" height="15px"> <a href="#">Học Html Cơ Bản - part1</a></td>
+    				<td>Html cơ bản</td>
+    			</tr>
+    			<tr>
+    				<td><img src="img/icon/next.png" width="15px" height="15px"> <a href="#">Học Html Cơ Bản - part1</a></td>
+    				<td>Html cơ bản</td>
+    			</tr>
+    			<tr>
+    				<td><img src="img/icon/next.png" width="15px" height="15px"> <a href="#">Học Html Cơ Bản - part1</a></td>
+    				<td>Html cơ bản</td>
+    			</tr>
+    			<tr>
+    				<td><img src="img/icon/next.png" width="15px" height="15px"> <a href="#">Học Html Cơ Bản - part1</a></td>
+    				<td>Html cơ bản</td>
+    			</tr>
+    			<tr>
+    				<td><img src="img/icon/next.png" width="15px" height="15px"> <a hrfe="#">Học Html Cơ Bản - part1</a></td>
+    				<td>Html cơ bản</td>
+    			</tr>
+    			<tr>
+    				<td><img src="img/icon/next.png" width="15px" height="15px"> <a hrfe="#">Học Html Cơ Bản - part1</a></td>
+    				<td>Html cơ bản</td>
+    			</tr>
+    			<tr>
+    				<td><img src="img/icon/next.png" width="15px" height="15px"> <a hrfe="#">Học Html Cơ Bản - part1</a></td>
+    				<td>Html cơ bản</td>
+    			</tr>
+    			<tr>
+    				<td><img src="img/icon/next.png" width="15px" height="15px"> <a hrfe="#">Học Html Cơ Bản - part1</a></td>
+    				<td>Html cơ bản</td>
+    			</tr>
+    		</table>
+    	</div><!--new-left-->
+
+    	<div id="new-right">
+    		<div id="list">&raquo; Chuyên Mục Blog </div>
+    		<div class="new-right-left">
+    			<div id="list-1">List Category</div>
+    			<?php
+    				$sql1="SELECT * FROM category";
+    				$query=mysqli_query($conn,$sql1);
+    				while($rs=mysqli_fetch_array($query,MYSQLI_ASSOC)) : 
+    			?>
+    				<li><a href="category-menu.php?id=<?php echo $rs['id']; ?>"><font color="red">&rsaquo;</font> <?php echo $rs['title']; ?></a></li>
+
+    			<?php endwhile; ?>
+    		</div><!--new-right-left-->
+
+    		<div class="new-right-right">
+    			<div id="list-1"> Tạo Blog New</div>
+    			<li><a href="create-posts.php"><font color="red">&rsaquo;</font> Tạo Bài Viết Mới</a></li>
+    			<li><a href="create-menu.php"><font color="red">&rsaquo;</font> Tạo Category</a></li>
+    		</div><!--new-right-right-->
+    		
+    	</div><!--new-right-->
+	<div style="clear:left;"></div>
+
+    </div><!--new-list-->
 	<div id="bottom">
-	<div style="clear:left;">
+	<div style="clear:left;"></div>
 		<h2> Blog Tin9a5</h2>
-		<div class="t1"><h2>Building</h2>
-			<h4>Địa Chỉ: 296 Lĩnh Nam - Hoàng Mai - Hà Nội</h4>
-			<h4>Coppyright: Tuyển Giảng &trade;</h4>
-		</div>
-		<div class="t2">
-			<h2>Thiết Kế</h2>
-			<h4>+ Nhận tư vấn về lập trình</h4>
-			<h4>+ Xây dựng blog mạnh</h4>
-			<h4>+ Phát triển đúng mục đích</h4>
-
-		</div>
-		<div class="t3">
-			<h2>Bản Quyền</h2>
-
-			<h4>Uneti -Tin9a5 &copy;</h4>
-			
-		</div>
+		
 	</div><!--bottom-->
 
 </body>

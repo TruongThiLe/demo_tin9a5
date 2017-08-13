@@ -15,7 +15,7 @@
 				<div class="text">Log Tin9A5</div>
 			</div><!--logo-->
 			<div id="search">
-				<form method="post">
+				<form method="post" action="search">
 					<input type="search" placeholder="Bạn Tìm Gì nào" name="search">
 					<button type="submit" class="btn btn-success">Tìm</button>
 				</form>
@@ -24,15 +24,24 @@
 	</div><!--header-->
 	<div id="menu">
 			<ul>
-				<li><a href="index.php"><img src="img/icon/home.png">Trang Chủ</a></li>
-				<li><a href="#">Diễn Đàn</a></li>
+				<li><a href="index.php">Trang Chủ</a></li>
+				<li><a href="#">Upload</a>
+					<ul class="sub-menu">
+						<li><a href="create-posts.php">Viết Bài</a></li>
+						<li><a href="create-menu.php">Tạo Category</a></li>
+					</ul>
+				</li>
 				<li><a href="#">Lịch Học</a></li>
 				<li><a href="#">Tài Liệu
 					<ul class="sub-menu">
-						<li><a href="#">Học Html Cơ Bản</a></li>
-						<li><a href="#">Học Php</a></li>
-						<li><a href="#">Học Javascript</a></li>
-						<li><a href="#">Học Mysql</a></li>
+					<?php
+
+			 				$sql="SELECT * FROM category";
+			 				$query=mysqli_query($conn,$sql);
+			 				while($rs=mysqli_fetch_array($query,MYSQLI_ASSOC)):
+ 					?>
+						<li><a href="category-menu.php?id=<?php echo $rs['id']; ?>"><?php echo $rs['title']; ?></a></li>
+					<?php endwhile; ?>
 					</ul>
 
 				</a></li>

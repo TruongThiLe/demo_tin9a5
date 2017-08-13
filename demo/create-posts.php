@@ -5,9 +5,11 @@
 		$content=$_POST["content"];
 		$excerpt=$_POST["excerpt"];
 		$user=$_POST["user"];
+		$category=$_POST["category"];
 
-		$sql = "INSERT INTO posts( title , content , excerpt , user)
-			VALUES('{$title}','{$content}','{$excerpt}','{$user}')";
+		$sql = "INSERT INTO posts( title , content , excerpt , user,cat_id)
+				VALUES('{$title}','{$content}','{$excerpt}','{$user}','{$category}')";
+
 		$query=mysqli_query($conn,$sql);
 
 		if($query){
@@ -15,7 +17,9 @@
 			echo "alert('Viết bài viết thành công')";
 			echo "</script>";
 		}else{
-			echo "<h1>Viết Bài Thất Bại</h1>"  . mysqli_error($conn);
+			echo "<script type='text/javascript'>";
+			echo "alert('Viết bài viết không thành công')";
+			echo "</script>";
 		}
 	}
 
@@ -30,11 +34,23 @@
  		<input type="text" name="title" placeholder="Nhập Tiêu Đề">
  	</label>
  	<label>Nhập Nội Dung
- 		<textarea placeholder="Nhập Nội Dung Bài Viết" name="content"></textarea>
+ 		<textarea class="textarea"  placeholder="Nhập Nội Dung Bài Viết" name="content"></textarea>
  	</label>
  	<label>Nhập ND Tóm Tắt
- 		<textarea placeholder="Nhập Nội Dung Tóm Tắt" name="excerpt"></textarea>
+ 		<textarea class="textarea" placeholder="Nhập Nội Dung Tóm Tắt" name="excerpt"></textarea>
  	</label>
+ 	<label>Chuyên Mục<br>
+ 		<select name="category">
+ 			<?php
+
+ 				$sql="SELECT * FROM category";
+ 				$query=mysqli_query($conn,$sql);
+ 				while($rs=mysqli_fetch_array($query,MYSQLI_ASSOC)):
+ 			?>
+ 			<option value="<?php echo $rs['id']; ?>"><?php echo $rs['title']; ?></option>
+ 			<?php endwhile; ?>
+ 		</select>
+ 	</label><br>
  	<label>Nhập Bút Danh
  		<input type="text" name="user" placeholder="Nhập Bút Danh">
  	</label>
